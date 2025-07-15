@@ -1,0 +1,26 @@
+:root {
+  --accent:          #00b894;
+  --accent-light:    #9ff2dd;
+  --danger:          #ff7675;
+  --text:            #222;
+  --text-muted:      #555;
+  --bg-main:         #ffffff;
+  --bg-page:         #f5f7fa;
+  --radius:          12px;
+  --transition:      .15s ease;
+  --gap:             24px;
+}
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Inter", "Roboto", sans-serif;
+  color: var(--text);
+  background: var(--bg-page);
+  line-height: 1.45;
+}

@@ -1,0 +1,42 @@
+.filter {
+  padding:16px; background:var(--bg-main);
+  border:1px solid #e0e0e0; border-radius:var(--radius);
+  max-width:280px; margin-bottom:32px;
+}
+
+.filter__title   { 
+    margin:0 0 12px; 
+    font-size:18px; 
+}
+.filter__block   { 
+    border:0; 
+    padding:0; 
+    margin:0 0 20px; 
+}
+.filter__legend  { 
+    font-weight:600; 
+    margin-bottom:8px; 
+}
+
+.filter__label   { 
+    display:flex; 
+    flex-direction:column; 
+    gap:6px; 
+    margin-bottom:16px; 
+}
+.filter__input   { 
+    padding:8px 12px; 
+    border:1px solid #ccc; 
+    border-radius:6px; 
+    width:100%; 
+}
+
+.filter__radio   { 
+    display:flex; 
+    align-items:center; 
+    gap:8px; 
+    margin-bottom:8px; 
+}
+.filter__radio input{ 
+    margin:0; 
+}
