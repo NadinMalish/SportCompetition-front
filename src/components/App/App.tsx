@@ -1,20 +1,32 @@
 import './App.css';
 import Filter from '../Filter/Filter';
 import EventList from '../EventList/EventList';
-import { useEffect } from 'react';
-import { fetchEvents } from '../../services/EventCompetition';
+import { useEffect, useState } from 'react';
+import { fetchEvents, type EventInfo } from '../../services/EventCompetitionService';
 
 
 
 function App() {
+  const [events, setEvents] = useState<EventInfo[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      await fetchEvents();
-    }
+    useEffect(() => {
+    const load = async () => {
+      try {
+        const data = await fetchEvents();
+        setEvents(data);
+      } catch (e) {
+        setError('Не удалось загрузить мероприятия');
+        console.error(e);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    fetchData();
+    load();
   }, []);
+
 
   return (
     <>
@@ -38,7 +50,9 @@ function App() {
             <h1 className="pageTitle">Мероприятия</h1>
 
             <div className="eventsWrapper">
-              <EventList />
+              {loading && <p>Загрузка...</p>}
+              {error && <p className='error'>{error}</p>}
+              {!loading && !error && <EventList events={events}/>}
             </div>
           </div>
         </div>
