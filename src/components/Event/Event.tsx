@@ -1,4 +1,3 @@
-// src/components/Event/Event.tsx
 import React from 'react';
 import './Event.css';
 import { type EventInfo } from '../../services/EventCompetitionService';
@@ -17,9 +16,6 @@ const format = (date: Date | string) =>
 const Event: React.FC<Props> = ({ event }) => {
   const now = new Date();
 
-  // предполагаем:
-  // RegistrationDate  — дата начала регистрации
-  // RegistryDate      — дата окончания регистрации
   let badgeText = 'Регистрация открыта';
   let badgeMod  = 'open';
 
@@ -47,7 +43,6 @@ const Event: React.FC<Props> = ({ event }) => {
         </span>
       </div>
 
-      {/* кнопку можно заменить на <Link> при наличии роутинга */}
       <button className="event-item__arrow" aria-label="Подробнее">
         ›
       </button>

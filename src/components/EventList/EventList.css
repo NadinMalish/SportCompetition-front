@@ -1,7 +1,6 @@
 .day-list { 
     display:flex; 
-    flex-direction:column; 
-    gap:24px; 
+    flex-direction:column;  
 }
 
 .day-group {
@@ -45,6 +44,33 @@
   display:flex; 
   flex-direction:column; 
   gap:16px;
+}
+
+.pagination{
+  margin-top: 32px;
+  display:flex;
+  justify-content:center;
+  gap:8px;
+}
+
+.pagination__btn,
+.pagination__page{
+  min-width:36px;
+  height:36px;
+  padding:0 10px;
+  font-size:14px;
+  border:1px solid #ccc;
+  border-radius:6px;
+  background:#fff;
+  cursor:pointer;
+  transition:background .15s;
+}
+
+.pagination__page--current,
+.pagination__page:hover,
+.pagination__btn:hover{
+  background:var(--accent-light);
+  border-color:var(--accent);
 }
 
 @media(max-width:600px){

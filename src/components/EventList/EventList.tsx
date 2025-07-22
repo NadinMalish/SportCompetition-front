@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { type EventInfo } from '../../services/EventCompetitionService';
 import Event from '../Event/Event';
-import './EventList.css';   // ← вернули подключение CSS
+import './EventList.css';
 
 
 /** Хелпер: превращаем Date → { day: '15', weekday: 'Пн' } */
@@ -17,11 +17,14 @@ const getDateParts = (date: Date) => {
 };
 
 interface EventListProps {
-  events: EventInfo[];
+  events?: EventInfo[];
+  currentPage: number; 
+  totalPages: number;
+   onPageChange: (page: number) => void;
 }
 
-const EventList: React.FC<EventListProps> = ({ events }) => {
-  /** Группируем события по дню начала */
+const EventList: React.FC<EventListProps> = ({ events = [], currentPage, totalPages, onPageChange }) => {
+  //Группировка событий по дню начала
   const dayGroups = useMemo(() => {
     const map = new Map<
       string,
@@ -38,11 +41,32 @@ const EventList: React.FC<EventListProps> = ({ events }) => {
       map.get(key)!.events.push(e);
     });
 
-    /** превращаем Map → массив и сортируем по дате **/
+    //Сортировка по дате
     return Array.from(map.values()).sort(
       (a, b) => a.date.getTime() - b.date.getTime()
     );
   }, [events]);
+
+  const visiblePages = useMemo(() => {
+    // Показываем 1 … (p-2) (p-1) p (p+1) (p+2) … last
+    const delta = 2;
+    const pages: (number | "dots")[] = [];
+
+    const add = (p: number | "dots") => pages[pages.length - 1] !== p && pages.push(p);
+
+    for (let i = 1; i <= totalPages; i++) {
+      if (
+        i === 1 ||                                // всегда первая
+        i === totalPages ||                       // всегда последняя
+        Math.abs(i - currentPage) <= delta        // ±2 от текущей
+      ) {
+        add(i);
+      } else if (pages[pages.length - 1] !== "dots") {
+        add("dots");
+      }
+    }
+    return pages;
+  }, [currentPage, totalPages]);
 
   return (
     <div className="day-list">
@@ -51,17 +75,14 @@ const EventList: React.FC<EventListProps> = ({ events }) => {
 
         return (
           <section key={date.toISOString()} className="day-group">
-            {/* левая плашка с датой */}
             <div className="day-group__date">
               <span className="day-group__day">{day}</span>
               <span className="day-group__weekday">{weekday}</span>
             </div>
 
-            {/* список мероприятий текущего дня */}
             <ul className="day-group__events">
               {events.map((ev) => (
                 <li key={ev.id}>
-                  {/* передаём объект события внутрь компонента Event */}
                   <Event event={ev} />
                 </li>
               ))}
@@ -69,7 +90,40 @@ const EventList: React.FC<EventListProps> = ({ events }) => {
           </section>
         );
       })}
-    </div>
+
+    <nav className="pagination" aria-label="Навигация по страницам">
+        <button 
+          className="pagination__btn" 
+          aria-label="Предыдущая страница"
+          disabled={currentPage === 1}
+          onClick={() => onPageChange(currentPage - 1)}            
+          >‹</button>
+
+      {visiblePages.map((p, idx) =>
+        p === "dots" ? ( <span key={`dots-${idx}`} className="pagination__page">…</span> ) : (
+          <button
+            key={p}
+            className={
+              "pagination__page" +
+              (p === currentPage ? " pagination__page--current" : "")
+            }
+            onClick={() => onPageChange(p)}
+          >
+            {p}
+          </button>
+        )
+      )}
+
+      <button
+        className="pagination__btn"
+        aria-label="Следующая страница"
+        disabled={currentPage === totalPages}
+        onClick={() => onPageChange(currentPage + 1)}
+      >
+        ›
+      </button>
+    </nav>
+  </div>
   );
 };
 

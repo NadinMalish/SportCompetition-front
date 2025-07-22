@@ -1,7 +1,8 @@
 .filter {
-  padding:16px; background:var(--bg-main);
-  border:1px solid #e0e0e0; border-radius:var(--radius);
-  max-width:280px; margin-bottom:32px;
+  padding:16px; 
+  background:var(--bg-main);
+  border:1px solid #e0e0e0; 
+  border-radius:var(--radius);
 }
 
 .filter__title   { 

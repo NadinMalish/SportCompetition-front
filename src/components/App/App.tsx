@@ -8,6 +8,8 @@ import { fetchEvents, type EventInfo } from '../../services/EventCompetitionServ
 
 function App() {
   const [events, setEvents] = useState<EventInfo[]>([]);
+  const [page, setPage] = useState<number>(1);
+  const [countPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -15,7 +17,9 @@ function App() {
     const load = async () => {
       try {
         const data = await fetchEvents();
-        setEvents(data);
+        setEvents(data.events);
+        setPage(data.page)
+        setTotalPages(data.totalCount / 10)
       } catch (e) {
         setError('Не удалось загрузить мероприятия');
         console.error(e);
@@ -52,7 +56,12 @@ function App() {
             <div className="eventsWrapper">
               {loading && <p>Загрузка...</p>}
               {error && <p className='error'>{error}</p>}
-              {!loading && !error && <EventList events={events}/>}
+              {!loading && !error && <EventList 
+                events={events}
+                currentPage={page}
+                totalPages={countPages}
+                onPageChange={setPage}
+                />}
             </div>
           </div>
         </div>
