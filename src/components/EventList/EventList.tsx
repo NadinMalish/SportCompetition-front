@@ -24,6 +24,9 @@ interface EventListProps {
 }
 
 const EventList: React.FC<EventListProps> = ({ events = [], currentPage, totalPages, onPageChange }) => {
+  console.log(currentPage);
+  console.log(totalPages);
+  
   //Группировка событий по дню начала
   const dayGroups = useMemo(() => {
     const map = new Map<
@@ -55,11 +58,7 @@ const EventList: React.FC<EventListProps> = ({ events = [], currentPage, totalPa
     const add = (p: number | "dots") => pages[pages.length - 1] !== p && pages.push(p);
 
     for (let i = 1; i <= totalPages; i++) {
-      if (
-        i === 1 ||                                // всегда первая
-        i === totalPages ||                       // всегда последняя
-        Math.abs(i - currentPage) <= delta        // ±2 от текущей
-      ) {
+      if (i === 1 || Math.abs(i - currentPage) <= delta) {
         add(i);
       } else if (pages[pages.length - 1] !== "dots") {
         add("dots");

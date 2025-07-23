@@ -16,10 +16,10 @@ function App() {
     useEffect(() => {
     const load = async () => {
       try {
-        const data = await fetchEvents();
+        const data = await fetchEvents(page, 10);
         setEvents(data.events);
-        setPage(data.page)
-        setTotalPages(data.totalCount / 10)
+        //setPage(data.page)
+        setTotalPages(Math.round(data.totalCount / 10))
       } catch (e) {
         setError('Не удалось загрузить мероприятия');
         console.error(e);
@@ -29,7 +29,7 @@ function App() {
     };
 
     load();
-  }, []);
+  }, [page]);
 
 
   return (
