@@ -69,6 +69,12 @@
   width:100%; 
 }
 
+.loadingLabel, .error {
+  font-size: 30px;
+  text-align: center;
+  display: block;
+}
+
 @media (max-width: 768px) {
   .filter { 
     max-width: none; 

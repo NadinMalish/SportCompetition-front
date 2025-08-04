@@ -24,9 +24,6 @@ interface EventListProps {
 }
 
 const EventList: React.FC<EventListProps> = ({ events = [], currentPage, totalPages, onPageChange }) => {
-  console.log(currentPage);
-  console.log(totalPages);
-  
   //Группировка событий по дню начала
   const dayGroups = useMemo(() => {
     const map = new Map<
@@ -51,7 +48,7 @@ const EventList: React.FC<EventListProps> = ({ events = [], currentPage, totalPa
   }, [events]);
 
   const visiblePages = useMemo(() => {
-    // Показываем 1 … (p-2) (p-1) p (p+1) (p+2) … last
+    // Показываем first … (p-2) (p-1) p (p+1) (p+2) … last
     const delta = 2;
     const pages: (number | "dots")[] = [];
 
@@ -66,7 +63,9 @@ const EventList: React.FC<EventListProps> = ({ events = [], currentPage, totalPa
     }
     return pages;
   }, [currentPage, totalPages]);
-
+  
+  console.log(currentPage)
+  console.log(totalPages)
   return (
     <div className="day-list">
       {dayGroups.map(({ date, events }) => {
@@ -89,7 +88,7 @@ const EventList: React.FC<EventListProps> = ({ events = [], currentPage, totalPa
           </section>
         );
       })}
-
+    
     <nav className="pagination" aria-label="Навигация по страницам">
         <button 
           className="pagination__btn" 

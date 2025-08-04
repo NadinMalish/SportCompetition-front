@@ -17,9 +17,10 @@ export interface EventInfo {
     isCompleted: boolean;
 }
 
-export const fetchEvents = async (page = 1, pageSize = 10): Promise<PagedResult> => {
+export const fetchEvents = async (page = 1, pageSize = 10, search = "", signal?: AbortSignal): Promise<PagedResult> => {
     const { data } = await axios.get<PagedResult>("http://localhost:5226/api/v1/EventInfo",
-        { params: { page, pageSize }}
+        { params: { page, pageSize, search }, signal }
     );
+    
     return data;
 };
