@@ -41,6 +41,9 @@ function App() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const showSpinner = useDelayedFlag(loading, 250);
+    const [startDate, setStartDate] = useState<string | null>(null);
+    const [endDate, setEndDate] = useState<string | null>(null);
+    //const [typeRegistration, setTypeRegistration] = useState<string | null>(null);
 
     useEffect(() => setPage(1), [debouncedQuery]);
     useEffect(() => {
@@ -52,7 +55,7 @@ function App() {
       const load = async () => {
         try {
           setLoading(true);
-          const data = await fetchEvents(page, 10, debouncedQuery, controller.signal);
+          const data = await fetchEvents(page, 10, debouncedQuery, startDate, endDate, controller.signal);
           setEvents(data.events);
           setTotalPages(Math.max(1, Math.ceil(data.totalCount / 10)));
         } catch (e) {
@@ -68,7 +71,7 @@ function App() {
 
     load();
      return () => controller.abort();
-  }, [page, debouncedQuery]);
+  }, [page, debouncedQuery, startDate, endDate]);
 
 
   return (
@@ -79,7 +82,7 @@ function App() {
 
       <main className="content">
         <div className="eventLayout">
-          <Filter />
+          <Filter onStartDateChanged={setStartDate} onEndDateChanged={setEndDate} />
           <div className="eventsArea">
             <div className="topBar">
               <input
