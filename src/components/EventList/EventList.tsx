@@ -16,17 +16,24 @@ const getDateParts = (date: Date) => {
   };
 };
 
+export type SortOrder = 'asc' | 'desc';
+
 interface EventListProps {
   events?: EventInfo[];
   currentPage: number; 
   totalPages: number;
+  sortOrder?: SortOrder;
    onPageChange: (page: number) => void;
 }
 
+<<<<<<< Updated upstream
 const EventList: React.FC<EventListProps> = ({ events = [], currentPage, totalPages, onPageChange }) => {
   console.log(currentPage);
   console.log(totalPages);
   
+=======
+const EventList: React.FC<EventListProps> = ({ events = [], currentPage, totalPages, sortOrder = 'asc', onPageChange }) => {
+>>>>>>> Stashed changes
   //Группировка событий по дню начала
   const dayGroups = useMemo(() => {
     const map = new Map<
@@ -45,10 +52,12 @@ const EventList: React.FC<EventListProps> = ({ events = [], currentPage, totalPa
     });
 
     //Сортировка по дате
-    return Array.from(map.values()).sort(
-      (a, b) => a.date.getTime() - b.date.getTime()
-    );
-  }, [events]);
+    return Array.from(map.values()).sort((a, b) => {
+      return sortOrder === 'asc'
+        ? a.date.getTime() - b.date.getTime()
+        : b.date.getTime() - a.date.getTime();
+    });
+  }, [events, sortOrder]);
 
   const visiblePages = useMemo(() => {
     // Показываем 1 … (p-2) (p-1) p (p+1) (p+2) … last
@@ -66,7 +75,11 @@ const EventList: React.FC<EventListProps> = ({ events = [], currentPage, totalPa
     }
     return pages;
   }, [currentPage, totalPages]);
+<<<<<<< Updated upstream
 
+=======
+  
+>>>>>>> Stashed changes
   return (
     <div className="day-list">
       {dayGroups.map(({ date, events }) => {
