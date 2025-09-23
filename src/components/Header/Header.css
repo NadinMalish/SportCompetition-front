@@ -1,0 +1,20 @@
+.siteHeader {
+  position: relative;
+  background: #fff;
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+}
+.siteHeader::before { 
+  top: 0;    
+  height: 4px; 
+}
+.siteHeader::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0;
+  background: var(--accent);
+  pointer-events: none;
+  bottom: 0; 
+  height: 2px;
+}

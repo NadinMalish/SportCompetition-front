@@ -1,10 +1,11 @@
 import './App.css';
 import Filter from '../Filter/Filter';
-import EventList from '../EventList/EventList';
+import EventList, { type SortOrder } from '../EventList/EventList';
 import { useEffect, useRef, useState } from 'react';
 import { fetchEvents, type EventInfo } from '../../services/EventCompetitionService';
 import type { AxiosError } from 'axios';
 import axios from 'axios';
+import Header from '../Header/Header';
 
 function useDebounced<T>(value: T, delay = 300) {
   const [debounced, setDebounced] = useState(value);
@@ -43,6 +44,7 @@ function App() {
     const showSpinner = useDelayedFlag(loading, 250);
     const [startDate, setStartDate] = useState<string | null>(null);
     const [endDate, setEndDate] = useState<string | null>(null);
+    const [sortOrder, setSortOrder] = useState<SortOrder>('asc');
     //const [typeRegistration, setTypeRegistration] = useState<string | null>(null);
 
     useEffect(() => setPage(1), [debouncedQuery]);
@@ -55,7 +57,7 @@ function App() {
       const load = async () => {
         try {
           setLoading(true);
-          const data = await fetchEvents(page, 10, debouncedQuery, startDate, endDate, controller.signal);
+          const data = await fetchEvents(page, 10, debouncedQuery, startDate, endDate, sortOrder == 'asc' ? false : true, controller.signal);
           setEvents(data.events);
           setTotalPages(Math.max(1, Math.ceil(data.totalCount / 10)));
         } catch (e) {
@@ -71,15 +73,15 @@ function App() {
 
     load();
      return () => controller.abort();
-  }, [page, debouncedQuery, startDate, endDate]);
+  }, [page, debouncedQuery, startDate, endDate, sortOrder]);
 
+  const toggleSortOrder = () => {
+    setSortOrder(prev => (prev === 'asc' ? 'desc' : 'asc'));
+  };
 
   return (
     <>
-      <header className="siteHeader">
-        <a href="/"><img src="/logo.svg" className="logo" alt="Sport Competition" /></a>
-      </header>
-
+      <Header />
       <main className="content">
         <div className="eventLayout">
           <Filter onStartDateChanged={setStartDate} onEndDateChanged={setEndDate} />
@@ -92,7 +94,7 @@ function App() {
                 value={query}
                 onChange={e => setQuery(e.target.value)}
               />
-              <button className="sortBtn" aria-label="Сортировать A-Z">A↕Z</button>
+              <button className="sortBtn" aria-label="Сортировать A-Z" onClick={toggleSortOrder}>A↕Z</button>
             </div>
 
             <h1 className="pageTitle">Мероприятия</h1>

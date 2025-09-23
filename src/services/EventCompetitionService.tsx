@@ -17,7 +17,8 @@ export interface EventInfo {
     isCompleted: boolean;
 }
 
-export const fetchEvents = async (page: number = 1, pageSize: number = 10, search: string = "", startDate: string | null, endDate: string | null, typeRegistration: boolean | null, signal?: AbortSignal): Promise<PagedResult> => {
+export const fetchEvents = async (page: number = 1, pageSize: number = 10, search: string = "", startDate: string | null, endDate: string | null | null, 
+    orderByDesc: boolean, signal?: AbortSignal): Promise<PagedResult> => {
     const { data } = await axios.get<PagedResult>("http://localhost:5226/api/v1/EventInfo",
         { 
             params: 
@@ -27,11 +28,9 @@ export const fetchEvents = async (page: number = 1, pageSize: number = 10, searc
                 search,
                 startDate,
                 endDate,
-                typeRegistration
+                orderByDesc
             }, signal 
         }
     );
-    console.log(startDate)
-    console.log(endDate)
     return data;
 };

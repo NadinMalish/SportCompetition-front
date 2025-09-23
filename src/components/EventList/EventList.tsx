@@ -16,6 +16,8 @@ const getDateParts = (date: Date) => {
   };
 };
 
+export type SortOrder = 'asc' | 'desc';
+
 interface EventListProps {
   events?: EventInfo[];
   currentPage: number; 
