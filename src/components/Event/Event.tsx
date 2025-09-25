@@ -1,6 +1,7 @@
 import React from 'react';
 import './Event.css';
 import { type EventInfo } from '../../services/EventCompetitionService';
+import { Link } from 'react-router-dom';
 
 interface Props {
   event: EventInfo;
@@ -43,9 +44,9 @@ const Event: React.FC<Props> = ({ event }) => {
         </span>
       </div>
 
-      <button className="event-item__arrow" aria-label="Подробнее">
+      <Link to={`/event/${event.id}`} className="event-item__arrow" aria-label="Подробнее">
         ›
-      </button>
+      </Link>
     </div>
   );
 };

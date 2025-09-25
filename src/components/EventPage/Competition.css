@@ -1,0 +1,56 @@
+.competition {
+  padding: 16px 18px;
+}
+
+.competition__grid {
+  display: grid;
+  grid-template-columns: 110px 1fr auto;
+  gap: 16px;
+  align-items: start;
+}
+
+.competition__date {
+  min-width: 110px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.competition__title {
+  margin: 0 0 6px;
+  font-size: 18px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.competition__desc {
+  margin: 0;
+  color: #444;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.competition__btn {
+  align-self: start;
+  min-width: 120px;
+  height: 36px;
+  padding: 0 14px;
+  font-size: 14px;
+  font-weight: 700;
+  background: var(--accent-light);
+  border: 1px solid var(--accent);
+  color: #000;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background .15s, border-color .15s, transform .05s;
+}
+
+.competition__btn:hover {
+  background: #fff;
+  border-color: var(--accent);
+}
+
+.competition__btn:active {
+  transform: translateY(1px);
+}

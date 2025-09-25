@@ -7,6 +7,7 @@ import type { AxiosError } from 'axios';
 import axios from 'axios';
 import Header from '../Header/Header';
 
+
 function useDebounced<T>(value: T, delay = 300) {
   const [debounced, setDebounced] = useState(value);
   useEffect(() => {
@@ -20,12 +21,10 @@ function useDelayedFlag(value: boolean, delay = 250): boolean {
   const [flag, setFlag] = useState(false);
 
   useEffect(() => {
-    // если началась загрузка — ждём delay мс перед показом спиннера
     if (value) {
       const id = setTimeout(() => setFlag(true), delay);
-      return () => clearTimeout(id);        // отменяем, если загрузка успела закончиться
+      return () => clearTimeout(id);   
     }
-    // если загрузка закончилась — прячем индикатор мгновенно
     setFlag(false);
   }, [value, delay]);
 
@@ -94,20 +93,24 @@ function App() {
                 value={query}
                 onChange={e => setQuery(e.target.value)}
               />
-              <button className="sortBtn" aria-label="Сортировать A-Z" onClick={toggleSortOrder}>A↕Z</button>
+              <button className="sortBtn" aria-label="Сортировать A-Z" onClick={toggleSortOrder}>
+                A↕Z
+              </button>
             </div>
 
             <h1 className="pageTitle">Мероприятия</h1>
 
             <div className="eventsWrapper">
-              {showSpinner && <p className='loadingLabel'>Загрузка...</p>}
-              {error && <p className='error'>{error}</p>}
-              {!loading && !error && events.length !== 0 && <EventList 
-                events={events}
-                currentPage={page}
-                totalPages={countPages}
-                onPageChange={setPage}
-                />}
+              {showSpinner && <p className="loadingLabel">Загрузка...</p>}
+              {error && <p className="error">{error}</p>}
+              {!loading && !error && events.length !== 0 && (
+                <EventList
+                  events={events}
+                  currentPage={page}
+                  totalPages={countPages}
+                  onPageChange={setPage}
+                />
+              )}
               {!loading && !error && events.length === 0 && (
                 <p className="loadingLabel">Ничего не найдено</p>
               )}
@@ -117,6 +120,7 @@ function App() {
       </main>
     </>
   );
+
 }
 
 export default App;

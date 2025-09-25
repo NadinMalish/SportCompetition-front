@@ -1,0 +1,138 @@
+.card {
+  background: #fff;
+  border: 1px solid #000;
+  border-radius: var(--radius);
+  box-shadow: 0 6px 18px rgba(0,0,0,.10);
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 24px rgba(0,0,0,.15);
+}
+
+.eventPage {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+.eventPage__hero { padding: 20px 24px; }
+
+.eventPage__heroGrid {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: 1fr 420px;
+  align-items: center;
+}
+
+@media (max-width: 1100px) {
+  .eventPage__heroGrid { grid-template-columns: 1fr; }
+}
+
+/* Заголовок теперь внутри карточки */
+.eventPage__title {
+  margin: 0 0 10px;
+  font-size: 28px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.eventPage__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  align-items: center;
+  color: var(--text-muted);
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+.eventPage__dot { opacity: .6; }
+.eventPage__date { font-weight: 600; }
+
+.eventPage__desc {
+  margin: 0 0 10px;
+  color: #333;
+  line-height: 1.6;
+}
+
+.eventPage__media {
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.eventPage__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.eventPage__section {
+  display: block;
+}
+
+/* Заголовок списка */
+.eventPage__asideTitle {
+  margin: 0 0 12px;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.eventPage__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 16px;
+}
+
+.eventPage__item { padding: 16px 18px; }
+
+.eventPage__itemGrid {
+  display: grid;
+  grid-template-columns: 110px 1fr auto;
+  gap: 16px;
+  align-items: start;
+}
+
+.eventPage__itemDate {
+  min-width: 110px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.eventPage__itemTitle {
+  margin: 0 0 6px;
+  font-size: 18px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.eventPage__itemDesc {
+  margin: 0;
+  color: #444;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.eventPage__itemBtn {
+  align-self: start;
+  min-width: 120px;
+  height: 36px;
+  padding: 0 14px;
+  font-size: 14px;
+  font-weight: 700;
+  background: var(--accent-light);
+  border: 1px solid var(--accent);
+  color: #000;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background .15s, border-color .15s, transform .05s;
+}
+.eventPage__itemBtn:hover {
+  background: #fff;
+  border-color: var(--accent);
+}
+.eventPage__itemBtn:active { transform: translateY(1px); }
