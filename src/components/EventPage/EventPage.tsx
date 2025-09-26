@@ -1,21 +1,75 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Header from "../Header/Header";
 import "./EventPage.css";
 import Competition from "./Competition";
+import { useParams } from "react-router-dom";
+import { fetchEventById, type EventInfo } from "../../services/EventCompetitionService";
 
-const competitions = [
-  {
-    id: 1,
-    date: "12.06.2024",
-    title: "Бег с препятствиями",
-    description:
-      "Описание препятствий: этапы, правила, инвентарь. Укажите ограничение по времени, количество попыток и критерии победы.",
-  },
-  { id: 2, date: "12.06.2024", title: "Эстафета" },
-  { id: 3, date: "13.06.2024", title: "Метание мяча" },
-];
+// форматирование дат
+const fmt = (iso?: Date) => {
+  if (!iso) return undefined;
+  const d = new Date(iso);
+  return isNaN(d.getTime()) ? undefined : d.toLocaleDateString("ru-RU");
+};
+const range = (a?: Date, b?: Date) => {
+  const A = fmt(a);
+  const B = fmt(b);
+  if (A && B) return `${A} – ${B}`;
+  return A ?? B ?? "";
+};
 
 const EventPage: React.FC = () => {
+  const { id } = useParams<{ id: string }>();
+  const [event, setEvent] = useState<EventInfo>();
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(true); // <-- было undefined
+
+  useEffect(() => {
+    const abort = new AbortController();
+
+    (async () => {
+      try {
+        setLoading(true); // <-- ставим перед запросом
+        const data = await fetchEventById(Number(id), abort.signal);
+        setEvent(data as unknown as EventInfo);
+      } catch (e: any) {
+        if (e?.name === "CanceledError") return;
+        setError("Не удалось загрузить событие");
+        console.error(e);
+      } finally {
+        setLoading(false);
+      }
+    })();
+
+    return () => abort.abort(); // <-- cleanup, отменяем прошлый запрос
+  }, [id]); // <-- важна зависимость
+
+  if (loading) {
+    return (
+      <>
+        <Header />
+        <main className="content">
+          <p className="loadingLabel">Загрузка…</p>
+        </main>
+      </>
+    );
+  }
+
+  if (error || !event) {
+    return (
+      <>
+        <Header />
+        <main className="content">
+          <p className="error">{error ?? "Событие не найдено"}</p>
+        </main>
+      </>
+    );
+  }
+
+  const org = event.organizer
+    ? `${event.organizer.firstname} ${event.organizer.surname} ${event.organizer.lastname ?? ""}`.trim()
+    : null;
+
   return (
     <>
       <Header />
@@ -24,31 +78,27 @@ const EventPage: React.FC = () => {
           <article className="eventPage__hero card">
             <div className="eventPage__heroGrid">
               <div className="eventPage__heroText">
-                <h1 className="eventPage__title">Весёлые старты</h1>
+                <h1 className="eventPage__title">{event.name}</h1>
 
                 <div className="eventPage__meta">
-                  <span className="eventPage__date">12.06.2024 – 13.06.2024</span>
-                  <span className="eventPage__dot">•</span>
-                  <span className="eventPage__organizer">Организатор: Иванов И. И.</span>
+                  <span className="eventPage__date">
+                    {range(event.beginDate, event.endDate)}
+                  </span>
+                  {org && (
+                    <>
+                      <span className="eventPage__dot">•</span>
+                      <span className="eventPage__organizer">Организатор: {org}</span>
+                    </>
+                  )}
                 </div>
 
-                <p className="eventPage__desc">
-                  Это информационное описание мероприятия. Кратко расскажите цель,
-                  место проведения, требования к участникам и формат. Уточните, где
-                  найти регламент и как задать вопросы.
-                </p>
-                <p className="eventPage__desc">
-                  Второй абзац — детали по расписанию, наградам и безопасностям.
-                  Если есть возрастные группы или деление по уровням — опишите это.
-                </p>
+                {event.description && (
+                  <p className="eventPage__desc">{event.description}</p>
+                )}
               </div>
 
               <div className="eventPage__media">
-                <img
-                  className="eventPage__image"
-                  src="https://images.unsplash.com/photo-1533560904424-6d1f1b1f1fbc?q=80&w=1200&auto=format&fit=crop"
-                  alt="Иллюстрация мероприятия"
-                />
+                <img className="eventPage__image" src="image.png" alt={event.name} />
               </div>
             </div>
           </article>
@@ -56,11 +106,11 @@ const EventPage: React.FC = () => {
           <section className="eventPage__section">
             <h2 className="eventPage__asideTitle">Доступные состязания</h2>
             <ul className="eventPage__list">
-              {competitions.map((c) => (
+              {event.competitions?.map((c) => (
                 <Competition
                   key={c.id}
-                  date={c.date}
-                  title={c.title}
+                  date={range(c.beginDate, c.endDate)}
+                  title={c.name}
                   description={c.description}
                 />
               ))}
