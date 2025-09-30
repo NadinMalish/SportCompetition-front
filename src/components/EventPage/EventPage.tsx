@@ -3,7 +3,8 @@ import Header from "../Header/Header";
 import "./EventPage.css";
 import Competition from "./Competition";
 import { useParams } from "react-router-dom";
-import { fetchEventById, type EventInfo } from "../../services/EventCompetitionService";
+import { fetchEventById, listEventDocs, listCompetitionDocs, downloadUrl, type DocItem, type EventInfo } from "../../services/EventCompetitionService";
+import axios from "axios";
 
 // форматирование дат
 const fmt = (iso?: Date) => {
@@ -21,28 +22,51 @@ const range = (a?: Date, b?: Date) => {
 const EventPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [event, setEvent] = useState<EventInfo>();
+  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState<boolean>(true); // <-- было undefined
+
+  const [eventDocs, setEventDocs] = useState<DocItem[]>([]);
+  const [compDocs, setCompDocs] = useState<Record<number, DocItem[]>>({});
 
   useEffect(() => {
     const abort = new AbortController();
 
     (async () => {
       try {
-        setLoading(true); // <-- ставим перед запросом
+        setLoading(true);
+        setError(null);
+
         const data = await fetchEventById(Number(id), abort.signal);
-        setEvent(data as unknown as EventInfo);
-      } catch (e: any) {
-        if (e?.name === "CanceledError") return;
-        setError("Не удалось загрузить событие");
+        const ev = data as unknown as EventInfo;
+        setEvent(ev);
+
+        // грузим документы мероприятия
+        const [evDocs, perCompetition] = await Promise.all([
+          listEventDocs(Number(id)),
+          // на каждое состязание — запрос документов
+          Promise.all(
+            (ev.competitions ?? []).map(async c => {
+              const docs = await listCompetitionDocs(c.id);
+              return [c.id, docs] as const;
+            })
+          ),
+        ]);
+
+        setEventDocs(evDocs);
+        setCompDocs(Object.fromEntries(perCompetition)); // { [competitionId]: DocItem[] }
+      } catch(e: unknown) {
+        if (axios.isCancel?.(e)) {
+          return;
+      }
         console.error(e);
+        setError("Не удалось загрузить событие");
       } finally {
         setLoading(false);
       }
     })();
 
-    return () => abort.abort(); // <-- cleanup, отменяем прошлый запрос
-  }, [id]); // <-- важна зависимость
+    return () => abort.abort();
+  }, [id]);
 
   if (loading) {
     return (
@@ -95,6 +119,22 @@ const EventPage: React.FC = () => {
                 {event.description && (
                   <p className="eventPage__desc">{event.description}</p>
                 )}
+
+                {/* документы мероприятия */}
+                {eventDocs.length > 0 && (
+                  <div className="eventPage__docs">
+                    <strong>Документы мероприятия:</strong>
+                    <ul>
+                      {eventDocs.map(d => (
+                        <li key={d.id}>
+                          <a href={downloadUrl(d.id)}>
+                            {d.fileName ?? `Документ #${d.id}`}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
 
               <div className="eventPage__media">
@@ -112,6 +152,8 @@ const EventPage: React.FC = () => {
                   date={range(c.beginDate, c.endDate)}
                   title={c.name}
                   description={c.description}
+                  docs={compDocs[c.id]}
+                  makeDownloadLink={downloadUrl}
                 />
               ))}
             </ul>

@@ -40,6 +40,15 @@ export interface EventInfo {
     competitions: Competition[]
 }
 
+export type DocItem = {
+  id: number;          
+  fileName?: string;
+  commentDoc?: string;
+  idDocType?: number | null;
+  idEvent?: number | null;
+  idCompetition?: number | null;
+};
+
 export const fetchEvents = async (page: number = 1, pageSize: number = 10, search: string = "", startDate: string | null, endDate: string | null | null, 
     orderByDesc: boolean, signal?: AbortSignal): Promise<PagedResult> => {
     const { data } = await axios.get<PagedResult>("http://localhost:5226/api/v1/EventInfo",
@@ -66,3 +75,17 @@ export const fetchEventById = async (id: number, signal?: AbortSignal): Promise<
     );
     return data;
 };
+
+export const listEventDocs = async (eventId: number, signal?: AbortSignal): Promise<DocItem[]> => {
+  const { data } = await axios.get<DocItem[]>(`http://localhost:5226/Doc/by-event`, { params: { eventId }, signal });
+  return data;
+};
+
+export const listCompetitionDocs = async (competitionId: number, signal?: AbortSignal): Promise<DocItem[]> => {
+  const { data } = await axios.get<DocItem[]>(
+    `http://localhost:5226/Doc/by-competition`, { params: { competitionId }, signal }
+  );
+  return data;
+};
+
+export const downloadUrl = (docId: number) => `http://localhost:5226/Doc/${docId}/download`;

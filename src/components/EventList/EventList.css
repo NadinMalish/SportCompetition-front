@@ -1,3 +1,11 @@
+.competition__docs {
+  margin: 10px 0 0;
+  padding-left: 18px;
+}
+.competition__docLink {
+  text-decoration: underline;
+}
+
 .day-list { 
     display:flex; 
     flex-direction:column;  
